@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/deshtable/ecommerce-clone/issues"
   },
-  "homepage": "https://github.com/deshtable/ecommerce-clone#readme"
+  "homepage": "https://github.com/deshtable/ecommerce-clone#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
