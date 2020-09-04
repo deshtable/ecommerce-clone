@@ -6,6 +6,6 @@ res.send('Hello World!')
 
 })
 const PORT = process.env.PORT || 3000;
-app.listen(port, () => {
-console.log(`Example app listening at http://localhost:${port}`)
+app.listen(PORT, () => {
+console.log(`Example app listening at http://localhost:${PORT}`)
 })    
