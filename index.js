@@ -1,6 +1,8 @@
 const express = require('express')
+const apiTest = require('./apitest')
 const app = express()
 
+app.use(express.json());
 var path = require('path');
 
 app.get('/', (req, res) => {
@@ -9,8 +11,10 @@ app.get('/', (req, res) => {
 })
 
 app.post('/',(req,res)=>{
-    res.send("HELLO")
-    authorize()
+    res.sendFile(path.join(__dirname, 'website.html'))
+    console.log("hello world")
+    apiTest.runApi('Desh dad is proud')
+    console.log(req.body)
 })
 
 

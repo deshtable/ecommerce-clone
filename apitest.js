@@ -1,6 +1,6 @@
 const fs = require('fs');
 const readline = require('readline');
-const {google} = require('googleapis');
+const { google } = require('googleapis');
 const sheets = google.sheets('v4');
 
 // If modifying these scopes, delete token.json.
@@ -10,12 +10,16 @@ const SCOPES = ['https://www.googleapis.com/auth/drive'];
 // time.
 const TOKEN_PATH = 'token.json';
 
-// Load client secrets from a local file.
-fs.readFile('credentials.json', (err, content) => {
-  if (err) return console.log('Error loading client secret file:', err);
-  // Authorize a client with credentials, then call the Google Sheets API.
-  authorize(JSON.parse(content), main);
-});
+function runApi(receiptString) {
+  // Load client secrets from a local file.
+  fs.readFile('credentials.json', (err, content) => {
+    if (err) return console.log('Error loading client secret file:', err);
+    // Authorize a client with credentials, then call the Google Sheets API.
+    call = main.bind(this, receiptString)
+    authorize(JSON.parse(content), call);
+  });
+}
+module.exports = {runApi}
 
 /*
  * Create an OAuth2 client with the given credentials, and then execute the
@@ -24,9 +28,9 @@ fs.readFile('credentials.json', (err, content) => {
  * @param {function} callback The callback to call with the authorized client.
  */
 function authorize(credentials, callback) {
-  const {client_secret, client_id, redirect_uris} = credentials.installed;
+  const { client_secret, client_id, redirect_uris } = credentials.installed;
   const oAuth2Client = new google.auth.OAuth2(
-      client_id, client_secret, redirect_uris[0]);
+    client_id, client_secret, redirect_uris[0]);
 
   // Check if we have previously stored a token.
   fs.readFile(TOKEN_PATH, (err, token) => {
@@ -72,19 +76,19 @@ function getNewToken(oAuth2Client, callback) {
  * @see https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
  * @param {google.auth.OAuth2} auth The authenticated Google OAuth client.
  */
-function main(auth) {
-  const sheets = google.sheets({version: 'v4', auth});
+function main(message,auth) {
+  const sheets = google.sheets({ version: 'v4', auth });
   sheets.spreadsheets.values.append({
     spreadsheetId: '1PtCPP7aVYhs1ueA4wMlJNanoyEsb7MOIO5uusPbfcNg',
     range: 'Sheet1!A:A',
     valueInputOption: 'RAW',  // TODO: Update placeholder value.
     insertDataOption: 'INSERT_ROWS',  // TODO: Update placeholder value.
-    resource: {values:[["hello world"]]},
+    resource: { values: [[message]] },
   }, (err, res) => {
     if (err) return console.log('The API returned an error: ' + err);
     const rows = res.data.values;
-    
-    } 
+
+  }
   );
 }
 
