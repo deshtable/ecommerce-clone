@@ -1,19 +1,21 @@
 const express = require('express')
 const apiTest = require('./apitest')
+
 const app = express()
+app.use(express.static('client'))
 
 app.use(express.json());
 var path = require('path');
 
 app.get('/', (req, res) => {
     // res.send("Hello World");
-    res.sendFile(path.join(__dirname, 'website.html'))
+    res.sendFile(path.join(__dirname, 'client', 'website.html'))
 })
 
 app.post('/',(req,res)=>{
-    res.sendFile(path.join(__dirname, 'website.html'))
+    res.sendFile(path.join(__dirname, 'client', 'website.html'))
     console.log("hello world")
-    apiTest.runApi('Desh dad is proud')
+    apiTest.runApi(req.body.number +' ' + req.body.name)
     console.log(req.body)
 })
 
