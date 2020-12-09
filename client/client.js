@@ -6,7 +6,7 @@ class ItemList extends React.Component {
 
     constructor() {
         super()
-        this.state = {Oreo:0,'Fruit Punch':0, 'Pina Coladas': 420,"Dick cheese":-69};
+        this.state = {'Oreo':0,'Fruit Punch':0, 'Butter': 0,'Bujhi': 0};
 
     }
     

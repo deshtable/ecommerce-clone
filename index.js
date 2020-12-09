@@ -1,11 +1,13 @@
 const express = require('express')
 const apiTest = require('./apitest')
+const sendEmail = require('./email')
 
 const app = express()
 app.use(express.static('client'))
 
 app.use(express.json());
 var path = require('path');
+const { gmail } = require('googleapis/build/src/apis/gmail')
 
 app.get('/', (req, res) => {
     // res.send("Hello World");
@@ -14,9 +16,8 @@ app.get('/', (req, res) => {
 
 app.post('/',(req,res)=>{
     res.sendFile(path.join(__dirname, 'client', 'website.html'))
-    console.log("hello world")
     apiTest.runApi(assembleString(req.body))
-    console.log(req.body)
+
 })
 
 
