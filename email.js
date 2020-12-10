@@ -1,33 +1,30 @@
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
+async function sendEmail(targetEmail, emailmessage) {
+  let transporter = nodemailer.createTransport({
+    service: "gmail",
+    port: 587,
+    secure: false,
+    auth: {
+      user: "deshstephen@gmail.com",
+      pass: "desh.stephen01",
+    },
+  });
 
-async function sendemail(targetemail, emailmessage){
+  let emailInfo = await transporter.sendMail({
+    from: '"dephen" <deshstephen@gmail.com>',
+    to: targetEmail,
+    subject: "Thank You For Shopping! Here's Your Receipt",
+    text: emailmessage,
+  });
 
-    let transporter = nodemailer.createTransport({
-        service: 'gmail',
-        port: 587,
-        secure: false,
-        auth: {
-            user: 'deshstephen@gmail.com',
-            pass: 'desh.stephen01'
-        }
-    });
-
-    let emailInfo = await transporter.sendMail({
-        from: '"dephen" <deshstephen@gmail.com>',
-        to: targetemail,
-        subject: 'Thank You For Shopping! Your Receipt',
-        text: emailmessage
-        });
-
-    let info = transporter.sendMail(emailInfo, function(error, info){
+  let info = transporter.sendMail(emailInfo, function (error, info) {
     if (error) {
-        console.log(error);
+      console.log(error);
     } else {
-        console.log('Email sent: ' + info.response);
+      console.log("Email sent: " + info.response);
     }
-        });
+  });
 }
 
-sendemail()
-
+module.exports = { sendEmail };
