@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 
-async function sendemail(){
+async function sendemail(targetemail, emailmessage){
 
     let transporter = nodemailer.createTransport({
         service: 'gmail',
@@ -15,9 +15,9 @@ async function sendemail(){
 
     let emailInfo = await transporter.sendMail({
         from: '"dephen" <deshstephen@gmail.com>',
-        to: 'deshspo@gmail.com',
-        subject: 'Sending Email using Node.js',
-        text: 'That was easy!'
+        to: targetemail,
+        subject: 'Thank You For Shopping! Your Receipt',
+        text: emailmessage
         });
 
     let info = transporter.sendMail(emailInfo, function(error, info){
