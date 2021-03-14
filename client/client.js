@@ -7,6 +7,7 @@ class ItemList extends React.Component {
       "Fruit Punch": 0,
       Butter: 0,
       Bujhi: 0,
+      
     };
   }
 

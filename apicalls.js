@@ -2,6 +2,12 @@ const fs = require("fs");
 const readline = require("readline");
 const { google } = require("googleapis");
 const sheets = google.sheets("v4");
+const {
+  DynamoDBClient,
+  PutItemCommand,
+} = require("@aws-sdk/client-dynamodb");
+const dbclient = new DynamoDBClient({ region: "us-west-2" });
+
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
@@ -80,9 +86,20 @@ function getNewToken(oAuth2Client, callback) {
     });
   });
 }
+const run = async (params) => {
+  
+  try {
+    const data = await dbclient.send(new PutItemCommand(params));
+    console.log(data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 
 function receipts(message, auth) {
   const sheets = google.sheets({ version: "v4", auth });
+  
   sheets.spreadsheets.values.append(
     {
       spreadsheetId: "1PtCPP7aVYhs1ueA4wMlJNanoyEsb7MOIO5uusPbfcNg",
@@ -96,6 +113,14 @@ function receipts(message, auth) {
       const rows = res.data.values;
     }
   );
+  const params = {
+    TableName: "Receipts",
+    Item: {
+      receiptnum: { N: "01" },
+      receiptlog: { S: message },
+    },
+  };
+  run(params);
 }
 
 function login(accountInfo, auth) {

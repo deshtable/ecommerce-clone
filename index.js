@@ -1,6 +1,6 @@
 const express = require("express");
-const apiTest = require("./apitest");
-const sendEmail = require("./email");
+const apiTest = require("./apicalls");
+const {sendEmail} = require("./email");
 
 const app = express();
 app.use(express.static("client"));
@@ -14,7 +14,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/checkout", (req, res) => {
-  sendEmail(assembleString(req.body));
+  sendEmail("deshspo@gmail.com", assembleString(req.body));
   apiTest.runApi(apiTest.receipts.bind(this, assembleString(req.body)));
   //   apiTest.runApi(assembleString(req.body), "receipt");
   res.redirect("/");
