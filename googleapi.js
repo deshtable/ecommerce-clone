@@ -104,11 +104,10 @@ function login(accountInfo, auth) {
     {
       // spreadsheetId: "1LTn65aQZ2DT134SJ9NuvYVcI6sHN14YJ-4JrRRHQhK0/edit#gid=0",
       spreadsheetId: "1LTn65aQZ2DT134SJ9NuvYVcI6sHN14YJ-4JrRRHQhK0",
-      range: "Sheet1!C2:C2",
+      range: "Sheet1!C:C",
       valueInputOption: "RAW", // TODO: Update placeholder value.
       insertDataOption: "INSERT_ROWS", // TODO: Update placeholder value.
       resource: {
-        range: "Sheet1!C:C",
         majorDimension: "COLUMNS",
         values: [[accountInfo.username], [accountInfo.password]],
       },
