@@ -5,9 +5,9 @@ const sheets = google.sheets("v4");
 const {
   DynamoDBClient,
   PutItemCommand,
+  GetItemCommand,
 } = require("@aws-sdk/client-dynamodb");
 const dbclient = new DynamoDBClient({ region: "us-west-2" });
-
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
@@ -86,41 +86,55 @@ function getNewToken(oAuth2Client, callback) {
     });
   });
 }
-const run = async (params) => {
-  
+
+async function getAWS(params) {
+  try {
+    const data = await dbclient.send(new GetItemCommand(params));
+    return data;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
+async function putAWS(params) {
   try {
     const data = await dbclient.send(new PutItemCommand(params));
-    console.log(data);
+    // console.log(data);
   } catch (err) {
     console.error(err);
   }
-};
+}
 
-
-function receipts(message, auth) {
-  const sheets = google.sheets({ version: "v4", auth });
-  
-  sheets.spreadsheets.values.append(
-    {
-      spreadsheetId: "1PtCPP7aVYhs1ueA4wMlJNanoyEsb7MOIO5uusPbfcNg",
-      range: "Sheet1!A1:A1",
-      valueInputOption: "RAW", // TODO: Update placeholder value.
-      insertDataOption: "INSERT_ROWS", // TODO: Update placeholder value.
-      resource: { values: [[message]] },
-    },
-    (err, res) => {
-      if (err) return console.log("The API returned an error: " + err);
-      const rows = res.data.values;
-    }
-  );
+async function verifyAccount(accountInfo) {
   const params = {
-    TableName: "Receipts",
+    TableName: "Customers",
+    Key: { email: { S: accountInfo.email } },
+  };
+  const data = await getAWS(params);
+  // console.log(data);
+  //if data is empty
+  return data.Item === undefined;
+}
+
+function createAccountDBEntry(accountInfo) {
+  const params = {
+    TableName: "Customers",
     Item: {
-      receiptnum: { N: "01" },
-      receiptlog: { S: message },
+      firstName: {
+        S: accountInfo.firstName,
+      },
+      lastName: {
+        S: accountInfo.lastName,
+      },
+      email: {
+        S: accountInfo.email,
+      },
+      password: {
+        S: accountInfo.password,
+      },
     },
   };
-  run(params);
+  putAWS(params);
 }
 
 function login(accountInfo, auth) {
@@ -144,4 +158,4 @@ function login(accountInfo, auth) {
   );
 }
 
-module.exports = { runApi, receipts, login };
+module.exports = { runApi, createAccountDBEntry, verifyAccount, login };
