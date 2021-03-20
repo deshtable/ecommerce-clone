@@ -1,35 +1,35 @@
 const express = require("express");
 const apiCalls = require("./apicalls");
 const { sendEmail } = require("./email");
+const { gmail } = require("googleapis/build/src/apis/gmail");
+var path = require("path");
+
+const clientPath = path.join(__dirname, "..", "client");
 
 const app = express();
-app.use(express.static("client"));
+app.use(express.static(clientPath));
 
 app.use(express.json());
-var path = require("path");
-const { gmail } = require("googleapis/build/src/apis/gmail");
 
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "createAccount.html"));
+  res.sendFile(path.join(clientPath, "createAccount.html"));
 });
 app.get("/login", (req, res) => {
   res.send("Login Page");
 });
 
 app.post("/checkout", (req, res) => {
-  sendEmail("deshspo@gmail.com", assembleString(req.body));
-  apiCalls.runApi(apiCalls.receipts.bind(this, assembleString(req.body)));
-  //   apiCalls.runApi(assembleString(req.body), "receipt");
+  const receiptMsg = assembleString(req.body);
+  sendEmail("deshspo@gmail.com", receiptMsg);
+  apiCalls.runApi(apiCalls.receipts.bind(this, receiptMsg));
   res.redirect("/");
 });
 
 app.post("/createAccount", async (req, res) => {
-  // console.log(req.body);
   const verified = await apiCalls.verifyAccount(req.body);
   console.log(verified);
   if (verified) {
     apiCalls.createAccountDBEntry(req.body);
-    // res.redirect("/login");
     res.json({ alreadyExists: false });
   } else {
     res.json({ alreadyExists: true });
