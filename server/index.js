@@ -4,18 +4,15 @@ const { sendEmail } = require("./email");
 const { gmail } = require("googleapis/build/src/apis/gmail");
 var path = require("path");
 
-const clientPath = path.join(__dirname, "..", "client");
+const clientPath = path.join(__dirname, "..", "client", "dist");
 
 const app = express();
 app.use(express.static(clientPath));
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(clientPath, "createAccount.html"));
-});
-app.get("/login", (req, res) => {
-  res.send("Login Page");
+app.get("/*", (req, res) => {
+  res.sendFile(path.join(clientPath, "index.html"));
 });
 
 app.post("/checkout", (req, res) => {

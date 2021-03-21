@@ -1,0 +1,6 @@
+.shopping-cart-collapse {
+  position: fixed;
+  right: 0px;
+  width: 20%;
+  z-index: 10;
+}

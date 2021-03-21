@@ -1,0 +1,7 @@
+.create-account-illustration {
+  color: var(--green);
+  /* background: rgba(255, 255, 255, 0.4); */
+}
+.create-account-submit {
+  background-color: var(--green) !important;
+}

@@ -1,0 +1,18 @@
+.shop-card {
+  margin: 10px;
+  width: 250px;
+}
+.shop-card-body {
+  height: 64px;
+  width: 100%;
+}
+.shop-card-image {
+  height: 200px;
+  width: 200px;
+}
+
+.shop-card-add {
+  margin-left: auto;
+  height: 40px;
+  width: 40px;
+}
