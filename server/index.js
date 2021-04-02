@@ -1,5 +1,8 @@
 const express = require("express");
 const apiCalls = require("./apicalls");
+const passport = require("passport");
+const LocalStrategy = require("passport-local").Strategy;
+const session = require("express-session");
 const { sendEmail } = require("./email");
 const { gmail } = require("googleapis/build/src/apis/gmail");
 var path = require("path");
@@ -10,6 +13,29 @@ const app = express();
 app.use(express.static(clientPath));
 
 app.use(express.json());
+app.use(passport.initialize());
+app.use(session({ secret: "Cats" }));
+app.use(passport.session());
+
+passport.use(
+  new LocalStrategy(async (username, password, done) => {
+    const user = await apiCalls.verifyLogin({
+      email: username,
+      password: password,
+    });
+    done(null, user);
+  })
+);
+
+passport.serializeUser(function (user, done) {
+  console.log(user);
+  done(null, user.email);
+});
+
+passport.deserializeUser(async (email, done) => {
+  const user = await apiCalls.getUser({ email });
+  done(null, user);
+});
 
 app.get("/*", (req, res) => {
   res.sendFile(path.join(clientPath, "index.html"));
@@ -33,9 +59,12 @@ app.post("/createAccount", async (req, res) => {
   }
 });
 
-app.post("/login", (req, res) => {
-  console.log(req.body.username, req.body.password);
-  apiCalls.runApi(apiCalls.login.bind(this, req.body));
+app.post("/login", passport.authenticate("local"), (req, res) => {
+  // console.log(req.body.username, req.body.password);
+  //make sure email i
+  console.log(req.user);
+  res.json(req.user);
+  // apiCalls.runApi(apiCalls.login.bind(this, req.body));
 });
 
 function assembleString(body) {

@@ -6,8 +6,15 @@ const {
   DynamoDBClient,
   PutItemCommand,
   GetItemCommand,
+  ListTagsOfResourceInput,
 } = require("@aws-sdk/client-dynamodb");
-const dbclient = new DynamoDBClient({ region: "us-west-2" });
+
+const aws_creds = require("./config/aws_creds.js");
+
+const dbclient = new DynamoDBClient({
+  region: "us-west-2",
+  credentials: aws_creds,
+});
 
 // If modifying these scopes, delete token.json.
 const SCOPES = ["https://www.googleapis.com/auth/drive"];
@@ -89,6 +96,7 @@ function getNewToken(oAuth2Client, callback) {
 
 async function getAWS(params) {
   try {
+    console.log(params);
     const data = await dbclient.send(new GetItemCommand(params));
     return data;
   } catch (err) {
@@ -103,6 +111,33 @@ async function putAWS(params) {
   } catch (err) {
     console.error(err);
   }
+}
+
+async function verifyLogin(loginInfo) {
+  const params = {
+    TableName: "Customers",
+    Key: { email: { S: loginInfo.email } },
+  };
+  const data = await getAWS(params);
+  console.log("Status", data);
+  if (data.$metadata.httpStatusCode !== 200) {
+    return false;
+  }
+  if (!data.Item) {
+    return false;
+  }
+  const user = {
+    email: data.Item.email.S,
+    password: data.Item.password.S,
+    firstName: data.Item.firstName.S,
+    lastname: data.Item.lastName.S,
+  };
+
+  console.log(user, loginInfo);
+  if (user.password == loginInfo.password) {
+    return user;
+  }
+  return false;
 }
 
 async function verifyAccount(accountInfo) {
@@ -158,4 +193,10 @@ function login(accountInfo, auth) {
   );
 }
 
-module.exports = { runApi, createAccountDBEntry, verifyAccount, login };
+module.exports = {
+  runApi,
+  createAccountDBEntry,
+  verifyLogin,
+  verifyAccount,
+  login,
+};

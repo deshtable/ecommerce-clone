@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../assets/css/LoginPanel.css";
 import Modal from "./Modal.js";
@@ -11,6 +11,7 @@ export default class LoginPanel extends React.Component {
       email: "",
       password: "",
       modalActive: false,
+      redirect: false,
     };
   }
 
@@ -20,8 +21,26 @@ export default class LoginPanel extends React.Component {
     this.setState(newState);
   };
 
-  submitState = () => {
-    console.log(this.state);
+  submitState = async () => {
+    //send username and pw
+    const response = await fetch("/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: this.state.email,
+        password: this.state.password,
+      }),
+    });
+    if (response.status === 401) {
+      //if it returns bad email
+      // window.alert("Create Account!");
+
+      //if it returns bad password
+      window.alert("Check Email/Password!");
+    } else {
+      //if it returns user's data
+      this.setState({ redirect: true });
+    }
   };
 
   closeModal = () => {
@@ -32,6 +51,9 @@ export default class LoginPanel extends React.Component {
   };
 
   render() {
+    if (this.state.redirect) {
+      return <Redirect to="/shop" />;
+    }
     return (
       <React.Fragment>
         {/* <button onClick={this.openModal}>CLICK ME</button> */}
