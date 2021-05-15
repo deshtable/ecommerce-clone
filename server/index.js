@@ -1,7 +1,6 @@
 const express = require("express");
 const apiCalls = require("./apicalls");
 const { sendEmail } = require("./email");
-const { gmail } = require("googleapis/build/src/apis/gmail");
 var path = require("path");
 
 const clientPath = path.join(__dirname, "..", "client", "dist");
